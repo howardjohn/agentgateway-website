@@ -4,58 +4,665 @@ toc: false
 description: ""
 ---
 
-<section class="text-white pt-[7.875rem] bg-center bg-no-repeat bg-[length:61.85319rem_60.14119rem] lg:bg-auto">
-<div class="py-8 lg:py-16 flex flex-col items-center px-6 max-w-4xl mx-auto text-center">
-<h1 class="text-3xl/tight lg:text-5xl/tight xl:text-6xl/tight font-bold mt-6 font-heading">
-<span class="block">
-<span class="inline-block h-[1.2em] overflow-hidden align-bottom">
-<span id="hero-words" class="inline-block text-tertiary-text transition-transform duration-500">
-<span class="block">Connect</span>
-<span class="block">Secure</span>
-<span class="block">Observe</span>
-<span class="block">Connect</span>
-</span>
-</span>
-</span>
-<span class="block">Agentic Workflows</span>
-</h1>
-<script>
-(function() {
-const words = document.getElementById('hero-words');
-let current = 0;
-const total = 3;
-setInterval(() => {
-current++;
-words.style.transition = current > total ? 'none' : 'transform 0.5s';
-if (current > total) {
-current = 0;
-words.style.transform = 'translateY(0)';
-setTimeout(() => {
-current = 1;
-words.style.transition = 'transform 0.5s';
-words.style.transform = 'translateY(-25%)';
-}, 50);
-} else {
-words.style.transform = `translateY(-${current * 25}%)`;
-}
-}, 2000);
-})();
-</script>
-<p class="text-xl max-w-2xl font-semibold mt-6 lg:mt-10 font-heading text-secondary-text">
-Agent Gateway is an open source HTTP and gRPC proxy that handles standard API traffic and AI-native protocols (A2A & MCP) in one place — connecting, securing, and observing agent-to-LLM, agent-to-tool, and agent-to-agent communication across any framework and environment.
-</p>
-<div class="flex flex-wrap justify-center gap-4 pt-10">
-{{< button style="primary" href="/docs/quickstart/" iconRight="true" text="Get Started" icon="arrow-right" >}}
-{{< button style="secondary" href="https://github.com/agentgateway/agentgateway" text="View on GitHub" icon="github" >}}
-{{< button style="secondary" href="https://discord.gg/y9efgEmppm" text="Discord" icon="discord" >}}
-</div>
-<div class="mt-12 w-full max-w-3xl">
-<img src="/heroshort.png" alt="Agent Gateway" class="w-full rounded-lg" />
+<style>
+  .home-hero {
+    position: relative;
+    min-height: min(820px, calc(100svh - 1rem));
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    color: #101828;
+    background: #f7f9fc;
+    border-bottom: 1px solid #dbe3ef;
+    isolation: isolate;
+  }
+
+  .home-hero::before {
+    display: none;
+  }
+
+  .home-hero::after {
+    display: none;
+  }
+
+  .landing-navbar .link {
+    color: #273449 !important;
+  }
+
+  .landing-navbar .link:hover {
+    color: #111827 !important;
+  }
+
+  .landing-navbar a[href="/"] svg path,
+  nav.absolute.top-0 a[href="/"] svg path {
+    fill: #111827;
+  }
+
+  .landing-navbar a[href="/"] svg path:nth-of-type(-n + 10),
+  nav.absolute.top-0 a[href="/"] svg path:nth-of-type(-n + 10) {
+    fill: #7734be;
+  }
+
+  nav.absolute.top-0 button {
+    background: #111827;
+  }
+
+  .home-hero-inner {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1240px;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding: 9rem 1.5rem 5rem;
+  }
+
+  .home-hero-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 430px);
+    align-items: center;
+    gap: 3.5rem;
+  }
+
+  .home-hero-copyblock {
+    min-width: 0;
+  }
+
+  .home-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    color: #a78bfa;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+  }
+
+  .home-eyebrow img {
+    width: 1.375rem;
+    height: 1.375rem;
+  }
+
+  .home-hero h1 {
+    max-width: 900px;
+    color: #111827;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: clamp(3.4rem, 5.7vw, 5rem);
+    line-height: 0.9;
+    font-weight: 850;
+    letter-spacing: 0;
+    text-shadow: none;
+  }
+
+  .home-hero-subtitle {
+    max-width: 760px;
+    margin-top: 1.5rem;
+    color: #2f3a4f;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: clamp(1.3rem, 2.2vw, 2rem);
+    line-height: 1.25;
+    font-weight: 760;
+  }
+
+  .home-hero-copy {
+    max-width: 700px;
+    margin-top: 1.25rem;
+    color: #4b5565;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+
+  .home-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.875rem;
+    margin-top: 2rem;
+  }
+
+  .home-proof {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    max-width: 660px;
+    margin-top: 2.75rem;
+    overflow: hidden;
+    border: 1px solid rgba(119, 52, 190, 0.16);
+    border-radius: 8px;
+    background: rgba(119, 52, 190, 0.16);
+    box-shadow: 0 24px 80px rgba(15, 23, 42, 0.08);
+  }
+
+  .home-proof div {
+    min-height: 5.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.76);
+    backdrop-filter: blur(12px);
+  }
+
+  .home-proof strong {
+    display: block;
+    color: #111827;
+    font-size: 1.35rem;
+    line-height: 1.1;
+  }
+
+  .home-proof span {
+    display: block;
+    margin-top: 0.45rem;
+    color: #596579;
+    font-size: 0.78rem;
+    line-height: 1.35;
+  }
+
+  .home-traffic-diagram {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 500px;
+    padding: 1.25rem;
+    border: 1px solid rgba(119, 52, 190, 0.18);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: 0 28px 90px rgba(15, 23, 42, 0.1);
+    overflow: hidden;
+  }
+
+  .home-traffic-diagram::before {
+    content: "";
+    position: absolute;
+    inset: 1.25rem;
+    border: 1px dashed rgba(119, 52, 190, 0.18);
+    border-radius: 6px;
+    pointer-events: none;
+  }
+
+  .home-diagram-label {
+    position: relative;
+    z-index: 1;
+    color: #7a8496;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .home-diagram-row {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.625rem;
+    min-width: 0;
+    margin-top: 0.75rem;
+  }
+
+  .home-diagram-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 3.35rem;
+    padding: 0.75rem;
+    border: 1px solid rgba(119, 52, 190, 0.18);
+    border-radius: 8px;
+    background: #ffffff;
+    color: #182235;
+    font-size: 0.88rem;
+    font-weight: 740;
+    text-align: center;
+    box-shadow: 0 12px 34px rgba(15, 23, 42, 0.06);
+  }
+
+  .home-diagram-node span {
+    display: block;
+    margin-top: 0.2rem;
+    color: #667085;
+    font-size: 0.68rem;
+    font-weight: 600;
+  }
+
+  .home-diagram-bus {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    min-height: 11rem;
+  }
+
+  .home-diagram-bus::before,
+  .home-diagram-bus::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    width: 1px;
+    height: 3.25rem;
+    background: #9b67d8;
+    transform: translateX(-50%);
+  }
+
+  .home-diagram-bus::before {
+    top: 0.875rem;
+  }
+
+  .home-diagram-bus::after {
+    bottom: 0.875rem;
+  }
+
+  .home-diagram-core {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+    width: min(70%, 300px);
+    min-height: 6rem;
+    border: 2px solid rgba(119, 52, 190, 0.48);
+    border-radius: 8px;
+    background: #ffffff;
+    color: #111827;
+    text-align: center;
+    box-shadow: 0 24px 70px rgba(119, 52, 190, 0.14);
+  }
+
+  .home-diagram-core strong {
+    display: block;
+    font-size: 1.15rem;
+  }
+
+  .home-diagram-core span {
+    display: block;
+    margin-top: 0.25rem;
+    color: #596579;
+    font-size: 0.75rem;
+    font-weight: 640;
+  }
+
+  .home-diagram-backends {
+    position: relative;
+    z-index: 1;
+  }
+
+  .home-company-strip {
+    background: #eef4ff;
+    border-top: 1px solid rgba(119, 52, 190, 0.12);
+    border-bottom: 1px solid rgba(119, 52, 190, 0.12);
+  }
+
+  .home-company-strip p {
+    color: #7a8496;
+  }
+
+  .home-company-strip .logo-item span {
+    color: #6b7280;
+  }
+
+  .home-company-strip .logo-item img {
+    filter: none !important;
+    opacity: 0.72;
+  }
+
+  .home-start-strip {
+    background: #f7f9fc;
+  }
+
+  .home-start-strip .home-quick-card,
+  .home-explain .home-explain-card,
+  .home-features .feature-item {
+    background: rgba(255, 255, 255, 0.82) !important;
+    border-color: rgba(119, 52, 190, 0.14) !important;
+    box-shadow: 0 18px 55px rgba(15, 23, 42, 0.07);
+  }
+
+  .home-start-strip .home-quick-card:hover,
+  .home-explain .home-explain-card:hover,
+  .home-features .feature-item:hover {
+    border-color: rgba(119, 52, 190, 0.38) !important;
+  }
+
+  .home-start-strip h3,
+  .home-explain h2,
+  .home-explain h3,
+  .home-explain .home-pill,
+  .home-features h2,
+  .home-features h3 {
+    color: #111827 !important;
+  }
+
+  .home-start-strip p,
+  .home-explain p,
+  .home-explain span,
+  .home-features p,
+  .home-features th,
+  .home-features td {
+    color: #4b5565 !important;
+  }
+
+  .home-start-strip .w-10,
+  .home-features .w-10 {
+    background: #f3efff !important;
+  }
+
+  .home-explain {
+    position: relative;
+    overflow: hidden;
+    background: #ffffff;
+    border-top: 1px solid #edf1f7;
+  }
+
+  .home-explain::after {
+    display: none;
+  }
+
+  .home-explain > div {
+    position: relative;
+    z-index: 1;
+  }
+
+  .home-explain .home-flow-panel {
+    background: rgba(255, 255, 255, 0.78) !important;
+    border-color: rgba(119, 52, 190, 0.16) !important;
+    box-shadow: 0 26px 80px rgba(15, 23, 42, 0.08);
+  }
+
+  .home-explain .home-flow-core {
+    background: #ffffff !important;
+    border-color: rgba(119, 52, 190, 0.48) !important;
+    box-shadow: 0 18px 45px rgba(119, 52, 190, 0.12);
+  }
+
+  .home-explain .home-pill {
+    background: #f7f5ff !important;
+    border-color: rgba(119, 52, 190, 0.18) !important;
+  }
+
+  .home-features {
+    background: #f7f9fc !important;
+  }
+
+  .home-features button:hover {
+    background: #f7f5ff !important;
+  }
+
+  .home-features .bg-tertiary-bg\/50 {
+    background: #f7f5ff !important;
+  }
+
+  .home-light-section {
+    background: #ffffff !important;
+    border-top: 1px solid #edf1f7;
+  }
+
+  .home-light-section-alt {
+    background: #f7f9fc !important;
+    border-top: 1px solid #dbe3ef;
+  }
+
+  .home-light-section h2,
+  .home-light-section h3,
+  .home-light-section h4,
+  .home-light-section-alt h2,
+  .home-light-section-alt h3,
+  .home-light-section-alt h4 {
+    color: #111827 !important;
+  }
+
+  .home-light-section p,
+  .home-light-section code,
+  .home-light-section .text-secondary-text,
+  .home-light-section-alt p,
+  .home-light-section-alt code,
+  .home-light-section-alt .text-secondary-text {
+    color: #4b5565 !important;
+  }
+
+  .home-light-section .bg-primary-bg,
+  .home-light-section .bg-secondary-bg,
+  .home-light-section .bg-tertiary-bg,
+  .home-light-section-alt .bg-primary-bg,
+  .home-light-section-alt .bg-secondary-bg,
+  .home-light-section-alt .bg-tertiary-bg {
+    background: #ffffff !important;
+  }
+
+  .home-light-section .border-secondary-border,
+  .home-light-section-alt .border-secondary-border {
+    border-color: #dbe3ef !important;
+  }
+
+  .home-light-section a.bg-primary-bg,
+  .home-light-section a.bg-secondary-bg,
+  .home-light-section a.bg-tertiary-bg,
+  .home-light-section-alt a.bg-primary-bg,
+  .home-light-section-alt a.bg-secondary-bg,
+  .home-light-section-alt a.bg-tertiary-bg,
+  .home-light-card {
+    background: #ffffff !important;
+    border-color: #dbe3ef !important;
+    box-shadow: 0 14px 42px rgba(15, 23, 42, 0.05);
+  }
+
+  .home-light-section a.bg-primary-bg:hover,
+  .home-light-section a.bg-secondary-bg:hover,
+  .home-light-section a.bg-tertiary-bg:hover,
+  .home-light-section-alt a.bg-primary-bg:hover,
+  .home-light-section-alt a.bg-secondary-bg:hover,
+  .home-light-section-alt a.bg-tertiary-bg:hover {
+    border-color: rgba(119, 52, 190, 0.38) !important;
+  }
+
+  .home-light-section .font-mono,
+  .home-light-section-alt .font-mono {
+    background: #0f172a !important;
+  }
+
+  .home-light-section .font-mono code,
+  .home-light-section-alt .font-mono code {
+    color: #e5e7eb !important;
+  }
+
+  .home-light-section .font-mono .text-secondary-text,
+  .home-light-section-alt .font-mono .text-secondary-text {
+    color: #94a3b8 !important;
+  }
+
+  .home-light-section button.bg-secondary-bg,
+  .home-light-section-alt button.bg-secondary-bg {
+    background: #f7f9fc !important;
+  }
+
+  .home-light-section a.text-primary-text:not(.bg-tertiary-text),
+  .home-light-section-alt a.text-primary-text:not(.bg-tertiary-text) {
+    color: #111827 !important;
+    background: #ffffff !important;
+    border-color: #dbe3ef !important;
+  }
+
+  .home-hero-actions a:first-child {
+    background: #7734be;
+    box-shadow: 0 12px 28px rgba(119, 52, 190, 0.24);
+  }
+
+  .home-hero-actions a:not(:first-child) {
+    color: #111827;
+    background: rgba(255, 255, 255, 0.72);
+    border-color: rgba(119, 52, 190, 0.2);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+    backdrop-filter: blur(10px);
+  }
+
+  .home-hero-actions a:hover {
+    border-color: rgba(119, 52, 190, 0.48);
+  }
+
+  .home-quick-card {
+    display: block;
+    border-radius: 8px;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    box-sizing: border-box;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+  }
+
+  .home-start-strip,
+  .home-light-section,
+  .home-light-section-alt {
+    overflow-x: hidden;
+  }
+
+  .home-start-strip .grid > *,
+  .home-light-section .grid > *,
+  .home-light-section-alt .grid > * {
+    min-width: 0;
+  }
+
+  .home-quick-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.26);
+  }
+
+  @media (max-width: 900px) {
+    .home-hero {
+      min-height: auto;
+    }
+
+    .home-hero-layout {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+
+    .home-hero-inner {
+      padding-top: 8rem;
+      padding-bottom: 5rem;
+    }
+
+    .home-proof {
+      grid-template-columns: 1fr;
+      max-width: 360px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .home-hero h1 {
+      font-size: clamp(2.35rem, 10.5vw, 2.6rem);
+      line-height: 0.98;
+    }
+
+    .home-hero-subtitle,
+    .home-hero-copy {
+      max-width: 21.5rem;
+    }
+
+    .home-hero-inner {
+      padding-bottom: 5rem;
+    }
+
+    .home-hero-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      max-width: 18rem;
+    }
+
+    .home-traffic-diagram {
+      width: calc(100% - 0.75rem);
+      min-height: auto;
+      padding: 0.875rem;
+    }
+
+    .home-diagram-row {
+      grid-template-columns: 1fr;
+    }
+
+    .home-diagram-bus {
+      min-height: 9rem;
+    }
+
+    .home-diagram-core {
+      width: 100%;
+    }
+
+    .home-start-strip > div,
+    .home-light-section > div,
+    .home-light-section-alt > div {
+      width: 100% !important;
+      max-width: 100vw !important;
+      box-sizing: border-box;
+    }
+
+    .home-start-strip .grid,
+    .home-light-section .grid,
+    .home-light-section-alt .grid {
+      grid-template-columns: minmax(0, 1fr) !important;
+    }
+  }
+</style>
+
+<section class="home-hero">
+<div class="home-hero-inner">
+<div class="home-hero-layout">
+  <div class="home-hero-copyblock">
+    <div class="home-eyebrow"><img src="/mark-transparent.svg" alt="" aria-hidden="true" />Open source API and AI gateway</div>
+    <h1 class="font-heading">agentgateway</h1>
+    <p class="home-hero-subtitle font-heading">
+    One high-performance gateway for service, LLM, and MCP traffic.
+    </p>
+    <p class="home-hero-copy">
+    An open source HTTP and gRPC gateway that handles traditional application traffic and AI-native protocols in one data plane. Route, secure, observe, and govern services, LLM provider traffic, MCP tools, and agent-to-agent communication without stitching together separate gateways.
+    </p>
+    <div class="home-hero-actions">
+    {{< button style="primary" href="/docs/quickstart/" iconRight="true" text="Get Started" icon="arrow-right" >}}
+    {{< button style="secondary" href="https://github.com/agentgateway/agentgateway" text="View on GitHub" icon="github" >}}
+    {{< button style="secondary" href="https://discord.gg/y9efgEmppm" text="Discord" icon="discord" >}}
+    </div>
+    <div class="home-proof">
+      <div>
+        <strong>LLM</strong>
+        <span>Provider routing, model traffic governance, and OpenAI-compatible APIs</span>
+      </div>
+      <div>
+        <strong>MCP</strong>
+        <span>Federate tools and expose existing APIs as MCP-native servers</span>
+      </div>
+      <div>
+        <strong>Services</strong>
+        <span>One unified gateway for all your traffic: traditional HTTP services with high performance and rich functionality</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-traffic-diagram" aria-label="agentgateway traffic diagram">
+    <div class="home-diagram-label">Incoming traffic</div>
+    <div class="home-diagram-row">
+      <div class="home-diagram-node">Apps<span>HTTP / gRPC</span></div>
+      <div class="home-diagram-node">Agents<span>A2A / tools</span></div>
+      <div class="home-diagram-node">Services<span>east-west</span></div>
+    </div>
+    <div class="home-diagram-bus">
+      <div class="home-diagram-core">
+        <strong>agentgateway</strong>
+        <span>route / secure / observe / govern</span>
+      </div>
+    </div>
+    <div class="home-diagram-backends">
+      <div class="home-diagram-label">Backends</div>
+      <div class="home-diagram-row">
+        <div class="home-diagram-node">LLM<span>providers</span></div>
+        <div class="home-diagram-node">MCP<span>tools</span></div>
+        <div class="home-diagram-node">Services<span>APIs</span></div>
+      </div>
+    </div>
+  </div>
 </div>
 </div>
 </section>
 
-<section class="py-12 bg-primary-bg overflow-hidden">
+<section class="home-company-strip py-12 bg-primary-bg overflow-hidden">
   <p class="text-center text-secondary-text text-lg font-medium mb-8">Contributing Companies</p>
   <div class="marquee-container">
     <div class="marquee-track">
@@ -197,11 +804,11 @@ Agent Gateway is an open source HTTP and gRPC proxy that handles standard API tr
 </section>
 
 
-<section class="py-16 bg-secondary-bg" id="get-started">
+<section class="home-start-strip py-16 bg-secondary-bg" id="get-started">
   <div class="max-w-7xl mx-auto px-6">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <!-- Install -->
-      <a href="/docs/quickstart/" class="group bg-tertiary-bg rounded-xl border border-secondary-border p-6 hover:border-tertiary-text transition-all">
+      <a href="/docs/quickstart/" class="home-quick-card group bg-tertiary-bg border border-secondary-border p-6 hover:border-tertiary-text transition-all">
         <div class="w-10 h-10 bg-primary-bg rounded-lg flex items-center justify-center mb-4">
           <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
@@ -211,7 +818,7 @@ Agent Gateway is an open source HTTP and gRPC proxy that handles standard API tr
         <p class="text-secondary-text text-sm">Get started with binary, Docker, or Kubernetes deployment options.</p>
       </a>
       <!-- Tutorials -->
-      <a href="/tutorials/" class="group bg-tertiary-bg rounded-xl border border-secondary-border p-6 hover:border-tertiary-text transition-all">
+      <a href="/tutorials/" class="home-quick-card group bg-tertiary-bg border border-secondary-border p-6 hover:border-tertiary-text transition-all">
         <div class="w-10 h-10 bg-primary-bg rounded-lg flex items-center justify-center mb-4">
           <svg class="w-5 h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
@@ -219,10 +826,10 @@ Agent Gateway is an open source HTTP and gRPC proxy that handles standard API tr
           </svg>
         </div>
         <h3 class="text-primary-text text-lg font-bold mb-2">Tutorials</h3>
-        <p class="text-secondary-text text-sm">Step-by-step guides for MCP connectivity, A2A, and LLM routing.</p>
+        <p class="text-secondary-text text-sm">Step-by-step guides for APIs, MCP connectivity, A2A, and LLM routing.</p>
       </a>
       <!-- Documentation -->
-      <a href="/docs/" class="group bg-tertiary-bg rounded-xl border border-secondary-border p-6 hover:border-tertiary-text transition-all">
+      <a href="/docs/" class="home-quick-card group bg-tertiary-bg border border-secondary-border p-6 hover:border-tertiary-text transition-all">
         <div class="w-10 h-10 bg-primary-bg rounded-lg flex items-center justify-center mb-4">
           <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -232,58 +839,58 @@ Agent Gateway is an open source HTTP and gRPC proxy that handles standard API tr
         <p class="text-secondary-text text-sm">Complete reference for configuration, security, and policies.</p>
       </a>
       <!-- Integrations -->
-      <a href="/docs/integrations/" class="group bg-tertiary-bg rounded-xl border border-secondary-border p-6 hover:border-tertiary-text transition-all">
+      <a href="/docs/integrations/" class="home-quick-card group bg-tertiary-bg border border-secondary-border p-6 hover:border-tertiary-text transition-all">
         <div class="w-10 h-10 bg-primary-bg rounded-lg flex items-center justify-center mb-4">
           <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
           </svg>
         </div>
         <h3 class="text-primary-text text-lg font-bold mb-2">Integrations</h3>
-        <p class="text-secondary-text text-sm">Connect with OpenAI, Anthropic, Gemini, Bedrock, Azure OpenAI, and MCP servers.</p>
+        <p class="text-secondary-text text-sm">Connect services, OpenAI, Anthropic, Gemini, Bedrock, Azure OpenAI, and MCP servers.</p>
       </a>
     </div>
   </div>
 </section>
 
 <!-- What is Agent Gateway Section -->
-<section class="py-20 bg-primary-bg">
+<section class="home-explain py-20 bg-primary-bg">
   <div class="max-w-7xl mx-auto px-6">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
       <div>
         <h2 class="text-primary-text text-3xl lg:text-4xl font-bold mb-6">What is Agent Gateway?</h2>
         <p class="text-secondary-text text-lg mb-4">
-          Agent Gateway is a next-generation proxy designed for the agentic AI ecosystem. It provides drop-in security, observability, and governance for agent-to-LLM, agent-to-tool (MCP), and agent-to-agent (A2A) communication.
+          Agent Gateway is an all-in-one gateway for application services, LLMs, and MCP tools. It handles standard service traffic alongside agent-to-LLM, agent-to-tool (MCP), and agent-to-agent (A2A) communication from one high-performance data plane.
         </p>
         <p class="text-secondary-text mb-8">
-          Built to tackle enterprise challenges, Agent Gateway enables teams to connect, secure, and audit all AI agent communications from a single control point.
+          Built to tackle enterprise traffic management, Agent Gateway gives teams one place to connect, secure, audit, and observe both application services and AI workloads.
         </p>
         <div class="space-y-4">
-          <div class="bg-secondary-bg rounded-xl border border-secondary-border p-4">
+          <div class="home-explain-card bg-secondary-bg rounded-xl border border-secondary-border p-4">
             <div class="flex items-center gap-3 mb-2">
               <svg class="w-5 h-5 text-tertiary-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
               </svg>
-              <h3 class="text-primary-text font-semibold">Protocol Native</h3>
+              <h3 class="text-primary-text font-semibold">API and AI Native</h3>
             </div>
-            <p class="text-secondary-text text-sm pl-8">Built on MCP and A2A protocols for seamless agent connectivity</p>
+            <p class="text-secondary-text text-sm pl-8">Built for HTTP, gRPC, MCP, A2A, and LLM provider APIs in one gateway</p>
           </div>
-          <div class="bg-secondary-bg rounded-xl border border-secondary-border p-4">
+          <div class="home-explain-card bg-secondary-bg rounded-xl border border-secondary-border p-4">
             <div class="flex items-center gap-3 mb-2">
               <svg class="w-5 h-5 text-tertiary-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
               </svg>
               <h3 class="text-primary-text font-semibold">Security First</h3>
             </div>
-            <p class="text-secondary-text text-sm pl-8">RBAC, JWT authentication, TLS, and CEL-based access policies</p>
+            <p class="text-secondary-text text-sm pl-8">RBAC, JWT authentication, TLS, and CEL-based access policies for service and AI traffic</p>
           </div>
-          <div class="bg-secondary-bg rounded-xl border border-secondary-border p-4">
+          <div class="home-explain-card bg-secondary-bg rounded-xl border border-secondary-border p-4">
             <div class="flex items-center gap-3 mb-2">
               <svg class="w-5 h-5 text-tertiary-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
               </svg>
               <h3 class="text-primary-text font-semibold">High Performance</h3>
             </div>
-            <p class="text-secondary-text text-sm pl-8">Written in Rust, designed for any scale deployment</p>
+            <p class="text-secondary-text text-sm pl-8">Written in Rust for low overhead, predictable latency, and any-scale deployment</p>
           </div>
         </div>
         <div class="mt-8">
@@ -291,21 +898,21 @@ Agent Gateway is an open source HTTP and gRPC proxy that handles standard API tr
         </div>
       </div>
       <div class="flex justify-center">
-        <div class="bg-secondary-bg rounded-xl border border-secondary-border p-8 w-full max-w-md">
+        <div class="home-flow-panel bg-secondary-bg rounded-xl border border-secondary-border p-8 w-full max-w-md">
           <div class="space-y-4">
             <div class="text-center">
-              <span class="text-secondary-text text-xs uppercase tracking-wider">AGENTS</span>
+              <span class="text-secondary-text text-xs uppercase tracking-wider">CLIENTS</span>
               <div class="flex justify-center gap-2 mt-3">
-                <span class="bg-tertiary-bg border border-secondary-border rounded-lg px-4 py-2 text-primary-text text-sm">Claude</span>
-                <span class="bg-tertiary-bg border border-secondary-border rounded-lg px-4 py-2 text-primary-text text-sm">LangGraph</span>
-                <span class="bg-tertiary-bg border border-secondary-border rounded-lg px-4 py-2 text-primary-text text-sm">Custom</span>
+                <span class="home-pill bg-tertiary-bg border border-secondary-border rounded-lg px-4 py-2 text-primary-text text-sm">Apps</span>
+                <span class="home-pill bg-tertiary-bg border border-secondary-border rounded-lg px-4 py-2 text-primary-text text-sm">Agents</span>
+                <span class="home-pill bg-tertiary-bg border border-secondary-border rounded-lg px-4 py-2 text-primary-text text-sm">Services</span>
               </div>
             </div>
             <div class="flex justify-center">
               <div class="w-px h-6 bg-tertiary-text"></div>
             </div>
             <div class="flex justify-center">
-              <div class="bg-primary-bg border-2 border-tertiary-text rounded-lg px-8 py-4 flex items-center justify-center">
+              <div class="home-flow-core bg-primary-bg border-2 border-tertiary-text rounded-lg px-8 py-4 flex items-center justify-center">
                 <img src="/mark-transparent.svg" alt="Agent Gateway" class="h-10 w-auto">
               </div>
             </div>
@@ -315,9 +922,9 @@ Agent Gateway is an open source HTTP and gRPC proxy that handles standard API tr
             <div class="text-center">
               <span class="text-secondary-text text-xs uppercase tracking-wider">BACKENDS</span>
               <div class="flex justify-center gap-2 mt-3">
-                <span class="bg-tertiary-bg border border-secondary-border rounded-lg px-3 py-2 text-primary-text text-xs">MCP Servers</span>
-                <span class="bg-tertiary-bg border border-secondary-border rounded-lg px-3 py-2 text-primary-text text-xs">LLMs</span>
-                <span class="bg-tertiary-bg border border-secondary-border rounded-lg px-3 py-2 text-primary-text text-xs">A2A Agents</span>
+                <span class="home-pill bg-tertiary-bg border border-secondary-border rounded-lg px-3 py-2 text-primary-text text-xs">Services</span>
+                <span class="home-pill bg-tertiary-bg border border-secondary-border rounded-lg px-3 py-2 text-primary-text text-xs">LLMs</span>
+                <span class="home-pill bg-tertiary-bg border border-secondary-border rounded-lg px-3 py-2 text-primary-text text-xs">MCP Tools</span>
               </div>
             </div>
           </div>
@@ -328,11 +935,36 @@ Agent Gateway is an open source HTTP and gRPC proxy that handles standard API tr
 </section>
 
 <!-- Features Section -->
-<section class="py-16 bg-primary-bg" id="features">
+<section class="home-features py-16 bg-primary-bg" id="features">
 <div class="max-w-4xl mx-auto px-6">
 <h2 class="text-primary-text text-3xl lg:text-4xl font-bold text-center pb-4">Features</h2>
-<p class="text-secondary-text text-center text-lg pb-10 max-w-2xl mx-auto">Everything you need to connect, secure, and observe your AI infrastructure</p>
+<p class="text-secondary-text text-center text-lg pb-10 max-w-2xl mx-auto">Everything you need for service traffic, LLM routing, and MCP connectivity in one fast gateway</p>
 <div class="space-y-3" id="features-list">
+
+<!-- Service Gateway -->
+<div class="feature-item bg-secondary-bg rounded-xl border border-secondary-border overflow-hidden">
+<button onclick="toggleFeature('api')" class="w-full flex items-center gap-4 p-5 text-left hover:bg-tertiary-bg/50 transition-colors">
+<div class="w-10 h-10 bg-tertiary-bg rounded-lg flex items-center justify-center shrink-0">
+<svg class="w-5 h-5 text-tertiary-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16M4 12h16M4 17h16"></path></svg>
+</div>
+<div class="flex-1">
+<h3 class="text-primary-text font-semibold">Service Gateway</h3>
+<p class="text-secondary-text text-sm">Route and secure everyday HTTP and gRPC services with policy, TLS, auth, and observability</p>
+</div>
+<svg id="chevron-api" class="w-5 h-5 text-secondary-text transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+</button>
+<div id="detail-api" class="hidden px-5 pb-5">
+<div class="pl-14 border-l-2 border-tertiary-text/30 ml-5">
+<p class="text-secondary-text text-sm mb-4">Use the same gateway for service traffic, LLM routing, and MCP connectivity instead of operating separate stacks for each traffic class.</p>
+<ul class="text-secondary-text text-sm space-y-2 mb-4">
+<li class="flex items-start gap-2"><span class="text-tertiary-text">•</span><span><strong class="text-primary-text">HTTP and gRPC proxying</strong> — Standard service-to-service and edge traffic</span></li>
+<li class="flex items-start gap-2"><span class="text-tertiary-text">•</span><span><strong class="text-primary-text">Traffic policies</strong> — TLS, CORS, rate limits, external auth, and request controls</span></li>
+<li class="flex items-start gap-2"><span class="text-tertiary-text">•</span><span><strong class="text-primary-text">Observability</strong> — Metrics, logs, and traces across API and AI traffic</span></li>
+</ul>
+<a href="/docs/" class="text-tertiary-text hover:underline text-sm font-medium">Learn more →</a>
+</div>
+</div>
+</div>
 
 <!-- LLM Gateway -->
 <div class="feature-item bg-secondary-bg rounded-xl border border-secondary-border overflow-hidden">
@@ -511,7 +1143,7 @@ chevron.classList.remove('rotate-180');
 </script>
 
 <!-- Getting Started Section -->
-<section class="py-16 bg-secondary-bg" id="getting-started">
+<section class="home-light-section-alt py-16 bg-secondary-bg" id="getting-started">
 <div class="max-w-4xl mx-auto px-6">
 <div class="flex justify-between items-center mb-6">
 <h2 class="text-primary-text text-2xl lg:text-3xl font-bold">Getting Started</h2>
@@ -559,7 +1191,7 @@ setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
 </script>
 
 <!-- Tutorials Section -->
-<section class="py-16 bg-primary-bg" id="tutorials">
+<section class="home-light-section py-16 bg-primary-bg" id="tutorials">
 <div class="max-w-7xl mx-auto px-6">
 <div class="flex justify-between items-center mb-4">
 <h2 class="text-primary-text text-2xl lg:text-3xl font-bold">Tutorials</h2>
@@ -693,7 +1325,7 @@ setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
 </section>
 
 <!-- Popular Integrations Section -->
-<section class="py-16 bg-secondary-bg" id="integrations">
+<section class="home-light-section-alt py-16 bg-secondary-bg" id="integrations">
 <div class="max-w-7xl mx-auto px-6">
 <div class="flex justify-between items-center mb-8">
 <h2 class="text-primary-text text-2xl lg:text-3xl font-bold">Popular Integrations</h2>
@@ -805,7 +1437,7 @@ function showK8sOption(option) {
 }
 </script>
 
-<section class="text-center py-20">
+<section class="home-light-section text-center py-20">
   <h2 class="text-primary-text text-3xl font-bold pb-12">
     AI-native connectivity for agentic applications
   </h2>
@@ -838,7 +1470,7 @@ function showK8sOption(option) {
 </section>
 
 <!-- Community Meeting Section -->
-<section class="py-16 bg-primary-bg" id="community-meeting">
+<section class="home-light-section-alt py-16 bg-primary-bg" id="community-meeting">
   <div class="max-w-5xl mx-auto px-6">
     <h2 class="text-primary-text text-3xl lg:text-4xl font-bold text-center mb-4">Join the Community</h2>
     <p class="text-center text-secondary-text text-lg mb-8 max-w-3xl mx-auto">
@@ -854,7 +1486,7 @@ function showK8sOption(option) {
 
 {{< quotes-carousel >}}
 
-<section class="text-center py-20 bg-secondary-bg">
+<section class="home-light-section text-center py-20 bg-secondary-bg">
   <h2 class="text-primary-text text-3xl font-bold pb-12">
     Solving AI Connectivity Challenges
   </h2>
